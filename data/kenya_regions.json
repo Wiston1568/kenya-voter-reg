@@ -1,0 +1,44 @@
+{
+  "Mombasa": {
+    "Changamwe": ["Port Reitz", "Kipevu", "Airport", "Changamwe", "Chaani"],
+    "Jomvu": ["Jomvu Kuu", "Miritini", "Mikindani"],
+    "Kisauni": ["Mtopanga", "Makadara", "Kongowea", "Mkomani", "Shanzu"],
+    "Likoni": ["Mtongwe", "Likoni", "Timbwani", "Magongo"],
+    "Mvita": ["Ganjoni", "Tudor", "Tudor Creek", "Majengo"],
+    "Nyali": ["Kongowea", "Mkomani", "Mwakirunge"]
+  },
+  "Nairobi": {
+    "Westlands": ["Kitisuru", "Parklands/Highridge", "Karura", "Zimmerman", "Kangemi"],
+    "Langata": ["Karen", "Nairobi West", "Nyayo Highrise", "South C"],
+    "Kasarani": ["Njiru", "Mwiki", "Clay City", "Roysambu", "Ruai"],
+    "Embakasi Central": ["Komarock", "Kayole North", "Kayole Central", "Matopeni"],
+    "Embakasi East": ["Utawala", "Mihango", "Mazingira", "Fedha", "Kwa Njenga"],
+    "Dagoretti North": ["Kilimani", "Kawangware", "Gatina", "Riruta"]
+  },
+  "Kiambu": {
+    "Ruiru": ["Kahawa Sukari", "Kahawa Wendani", "Gitothua", "Mwiki"],
+    "Thika Town": ["Kamenu", "Hospital", "Ngecha", "Gatuanyaga"],
+    "Kiambu": ["Karuri", "Muchatha", "Ndenderu", "Gachie"],
+    "Githunguri": ["Githiga", "Gathugu", "Ng’enda", "Kariara"]
+  },
+  "Nakuru": {
+    "Nakuru Town West": ["Biashara", "Kivumbini", "Nakuru West", "Kaptembwa"],
+    "Nakuru Town East": ["Kaptembwa East", "Lanet", "Flamingo", "Shaabab"],
+    "Naivasha": ["Karagita", "Njoro", "Mai Mahiu", "Naivasha Central"],
+    "Gilgil": ["Mau Narok", "Gilgil Town", "Mbaruk", "Kebirigo"]
+  },
+  "Kisumu": {
+    "Kisumu East": ["Obunga", "Manyatta A", "Manyatta B", "Kondele"],
+    "Kisumu West": ["West Nyakach", "North Nyakach", "Central Kisumu", "Nyamasaria"],
+    "Nyando": ["Kabonyo", "Koru", "Kobura", "Nyando Central"],
+    "Muhoroni": ["Chemelil", "Muhoroni East", "Muhoroni West", "Koru East"]
+  },
+  "Meru": {
+    "Buuri": ["Buuri East", "Buuri West", "Ngamba", "Mugango"],
+    "Igembe North": ["Maua", "Nkuu", "Ng’embu", "Umande"],
+    "Igembe Central": ["Mitunguu", "Githi", "Kianjai", "Akirambata"],
+    "Igembe South": ["Kibirichia", "Naari", "Timau", "Itabua"],
+    "Imenti North": ["Maua", "Nkubu", "Kianjai", "Ntonyiri"],
+    "Imenti Central": ["Mikinduri", "Nkubu Town", "Kagaari", "Kianjai Central"]
+  }
+}

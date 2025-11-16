@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kenya Voter Registration Admin Console</title>
+<link rel="stylesheet" href="css/admin.css">
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+</head>
+<body>
+
+<header class="header">
+  <h1>Kenya Voter Registration Admin Console</h1>
+  <div class="profile-menu">
+    <img src="images/default_profile.png" alt="Profile" id="profile-pic" class="profile-pic">
+    <div class="dropdown" id="profile-dropdown">
+      <p id="profile-name">Admin</p>
+      <button id="btn-scanner">QR Scanner</button>
+      <button id="btn-settings">Settings</button>
+      <button id="btn-logout">Logout</button>
+    </div>
+  </div>
+</header>
+
+<!-- Main Dashboard -->
+<div id="dashboard-container">
+  <section class="stats">
+    <div class="stat-card">Registered Voters: <span id="voter-count">0</span></div>
+    <div class="stat-card">Live Users: <span id="live-count">0</span></div>
+    <div class="stat-card">Superadmins: <span id="superadmin-count">0</span></div>
+    <div class="stat-card">Admins: <span id="admin-count">0</span></div>
+    <div class="stat-card">Superusers: <span id="superuser-count">0</span></div>
+    <div class="stat-card">Users: <span id="user-count">0</span></div>
+  </section>
+
+  <section class="controls">
+    <p>Use Settings to manage users and voter registration</p>
+  </section>
+
+  <section class="voter-table-section">
+    <input type="text" id="search-voter" placeholder="Search Voters">
+    <table id="voter-table">
+      <thead>
+        <tr>
+          <th>Name</th><th>County</th><th>Reg No</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+</div>
+
+<!-- Scanner Modal -->
+<div class="modal" id="modal-scanner">
+  <div class="modal-content scanner-content">
+    <span class="close" id="close-scanner">&times;</span>
+    <h2>QR Code Scanner</h2>
+    <div class="scanner-area">
+      <video id="scanner-video" style="display: none;"></video>
+      <canvas id="scanner-canvas"></canvas>
+      <button id="btn-start-camera">Start Camera</button>
+      <button id="btn-stop-camera" style="display: none;">Stop Camera</button>
+    </div>
+    <div class="scanner-fallback">
+      <h3>Or enter registration number:</h3>
+      <input type="text" id="manual-reg-no" placeholder="KEN-20251116-XXXX">
+      <button id="btn-submit-reg-no">Submit</button>
+    </div>
+    <div id="scanner-result"></div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal" id="modal-settings">
+  <div class="modal-content settings-content">
+    <span class="close" id="close-settings">&times;</span>
+    <h2>Settings</h2>
+    <div class="settings-tabs">
+      <button class="tab-btn active" data-tab="edit-profile">Edit Profile</button>
+      <button class="tab-btn" data-tab="admin-users">Admin Users</button>
+  <!-- Registered Voters removed per request -->
+      <button class="tab-btn" data-tab="manage-users">Manage Users</button>
+    </div>
+
+    <!-- Edit Profile Tab -->
+    <div id="edit-profile" class="tab-content active">
+      <h3>Edit Your Profile</h3>
+      <label>Username</label>
+      <input type="text" id="setting-username">
+      <label>Password</label>
+      <input type="password" id="setting-password" placeholder="Leave blank to keep current">
+      <label>Profile Picture</label>
+      <input type="file" id="setting-profile-pic" accept="image/*">
+      <img id="current-profile-pic" src="" alt="Profile" style="max-width: 100px;">
+      <button id="save-profile">Save Changes</button>
+      <p id="profile-msg"></p>
+    </div>
+
+    <!-- Registered Voters Tab -->
+    <div id="registered-voters" class="tab-content">
+      <h3>View Registered Voters</h3>
+      <input type="text" id="voters-search" placeholder="Search by name or ID">
+      <table id="settings-voters-table">
+        <thead>
+          <tr>
+            <th>Name</th><th>ID</th><th>Phone</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Register Person Tab -->
+    <div id="admin-users" class="tab-content">
+      <h3>Add New Admin User</h3>
+      <form id="form-add-admin-user">
+        <label>Username</label>
+        <input type="text" name="username" required>
+        <label>Password</label>
+        <input type="password" name="password" required>
+        <label>Role</label>
+        <select name="role" required>
+          <option value="">-- Select Role --</option>
+          <option value="superadmin">Superadmin</option>
+          <option value="admin">Admin</option>
+          <option value="superuser">Superuser</option>
+          <option value="user">User</option>
+        </select>
+        <label>Assign County (optional)</label>
+        <input type="text" name="county" placeholder="County">
+        <label>Profile Picture (optional)</label>
+        <input type="file" name="profile_picture" accept="image/*">
+        <button type="submit">Add Admin User</button>
+      </form>
+      <p id="admin-user-msg"></p>
+      <h4>Existing Admin Users</h4>
+      <table id="admin-users-table">
+        <thead>
+          <tr><th>Username</th><th>Role</th><th>County</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Manage Users Tab (for admins/superusers) -->
+    <div id="manage-users" class="tab-content">
+      <h3>Manage Users & Settings</h3>
+      <div id="toggle-registration-section" style="display:none;">
+        <button id="btn-toggle-registration" style="width:100%;margin-bottom:15px;">Toggle Voter Registration</button>
+        <p id="toggle-msg"></p>
+      </div>
+      <h4>User Management</h4>
+      <div id="manage-users-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Toggle Registration Modal (moved from main) -->
+<div class="modal" id="modal-toggle-registration">
+  <div class="modal-content">
+    <span class="close" id="close-toggle-registration">&times;</span>
+    <h2>Toggle Voter Registration</h2>
+    <p>Enter your password to confirm:</p>
+    <input type="password" id="toggle-password" placeholder="Password">
+    <button id="confirm-toggle">Toggle</button>
+    <p id="reg-toggle-msg"></p>
+  </div>
+</div>
+
+<script src="js/admin.js"></script>
+</body>
+</html>

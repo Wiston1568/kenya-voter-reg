@@ -1,0 +1,79 @@
+{
+  "voters": [
+    {
+      "id": "nWt52qo_",
+      "first_name": "anold",
+      "last_name": "kihima",
+      "kenyan_id": "5169",
+      "phone": "0707620397",
+      "email": "wistonanold2@gmail.com",
+      "county": "Nakuru",
+      "sub_county": "Gilgil",
+      "division": "",
+      "ward": "Gilgil Town",
+      "location": "",
+      "voter_reg_no": "KEN-20251116-TRZM",
+      "created_at": "2025-11-16T15:20:11.252Z"
+    },
+    {
+      "id": "8FvqIfDg",
+      "first_name": "anold",
+      "last_name": "kihima",
+      "kenyan_id": "516974",
+      "phone": "0707620397",
+      "email": "wistonanold2@gmail.com",
+      "county": "Nakuru",
+      "sub_county": "Gilgil",
+      "division": "",
+      "ward": "Gilgil Town",
+      "location": "",
+      "voter_reg_no": "KEN-20251116-VFXV",
+      "created_at": "2025-11-16T15:18:16.131Z"
+    },
+    {
+      "id": "bUMe_ONt",
+      "first_name": "anold ",
+      "last_name": "kihima",
+      "kenyan_id": "51697406",
+      "phone": "0707620397",
+      "email": "wistonanold2@gmail.com",
+      "county": "Nakuru",
+      "sub_county": "Gilgil",
+      "division": "",
+      "ward": "Gilgil Town",
+      "location": "",
+      "voter_reg_no": "KEN-20251116-UQGG",
+      "created_at": "2025-11-16T15:13:48.912Z"
+    },
+    {
+      "id": "XaIaRiLy",
+      "first_name": "anold ",
+      "last_name": "kihima",
+      "kenyan_id": "516974067",
+      "phone": "0707620397",
+      "email": "wistonanold2@gmail.com",
+      "county": "Nakuru",
+      "sub_county": "Gilgil",
+      "division": "",
+      "ward": "Gilgil Town",
+      "location": "",
+      "voter_reg_no": "KEN-20251116-J8RN",
+      "created_at": "2025-11-16T15:10:47.625Z"
+    },
+    {
+      "id": "Fk7QXTZd",
+      "first_name": "anold ",
+      "last_name": "kihima",
+      "kenyan_id": "55667788",
+      "phone": "0707620397",
+      "email": "wistonanold2@gmail.com",
+      "county": "Nakuru",
+      "sub_county": "Gilgil",
+      "division": "",
+      "ward": "Gilgil Town",
+      "location": "",
+      "voter_reg_no": "KEN-20251116-E5SG",
+      "created_at": "2025-11-16T15:09:52.356Z"
+    }
+  ]
+}

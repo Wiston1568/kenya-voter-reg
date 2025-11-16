@@ -1,0 +1,17 @@
+[
+  {
+    "id": "1",
+    "username": "wiston",
+    "password": "0710873403Aw",
+    "role": "superuser",
+    "profile_picture": "",
+    "token": "vqoOBILOnc79H1eL"
+  },
+  {
+    "id": "2",
+    "username": "charles",
+    "password": "1234",
+    "role": "superuser",
+    "profile_picture": ""
+  }
+]

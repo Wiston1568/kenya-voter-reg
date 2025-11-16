@@ -1,0 +1,7 @@
+nohup: ignoring input
+
+> kenya-voter-backend@1.0.0 start
+> node server.js
+
+[dotenv@17.2.3] injecting env (1) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+Server running at http://localhost:4000

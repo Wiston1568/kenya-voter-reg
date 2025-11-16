@@ -1,0 +1,29 @@
+{
+  "name": "kenya-voter-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "description": "Backend server for Kenya voter registration system",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "NODE_ENV=development node server.js"
+  },
+  "keywords": ["voter", "registration", "kenya"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.13.2",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.18.2",
+    "fs-extra": "^11.3.2",
+    "multer": "^2.0.2",
+    "nanoid": "^5.1.6",
+    "pdfkit": "^0.13.0",
+    "qrcode": "^1.5.4"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
+

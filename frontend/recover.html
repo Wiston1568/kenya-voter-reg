@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Recover Voter Card</title><link rel="stylesheet" href="css/style.css"></head>
+<body>
+  <div class="container">
+    <h2>Recover your Voter Card</h2>
+    <form id="recover-form">
+      <label>Kenyan ID</label>
+      <input id="rid" name="kenyan_id" required pattern="\\d{2,12}">
+      <button type="submit">Find</button>
+    </form>
+    <p id="rmsg"></p>
+    <a id="rdownload" style="display:none">Download Voter Card PDF</a>
+  </div>
+  <script src="js/recover.js"></script>
+</body>
+</html>

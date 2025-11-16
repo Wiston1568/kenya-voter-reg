@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Kenya Voter Registration</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Register to Vote</h2>
+
+    <form id="regForm" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="first_name">First name</label>
+        <input id="first_name" name="first_name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="last_name">Last name</label>
+        <input id="last_name" name="last_name" required />
+      </div>
+
+      <div class="form-group">
+  <label for="kenyan_id">Kenyan ID (numbers only)</label>
+  <input id="kenyan_id" name="kenyan_id" required pattern="\d{2,12}" placeholder="123456789" />
+  <small>Numeric only. Example: 123456789 </small>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input id="phone" name="phone" />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email (optional)</label>
+        <input id="email" name="email" />
+      </div>
+
+      <div class="form-group">
+        <label for="county">County</label>
+        <select id="county" name="county" required>
+          <option value="">Select county</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="sub_county">Sub-county</label>
+        <select id="sub_county" name="sub_county" required><option value="">Select sub-county</option></select>
+      </div>
+
+      <div class="form-group">
+        <label for="ward">Ward</label>
+        <select id="ward" name="ward" required><option value="">Select ward</option></select>
+      </div>
+
+      <div class="form-group">
+        <label>Passport photo (upload or use camera)</label>
+        <input type="file" id="photo" name="photo" accept="image/*" />
+        <div style="margin-top:8px">
+          <button type="button" id="use-camera">Use Camera</button>
+        </div>
+        <img id="photo-preview" class="photo-preview" src="" alt="preview" style="display:none;margin-top:8px"/>
+      </div>
+
+      <button type="submit">Submit Registration</button>
+    </form>
+
+    <p id="msg" style="margin-top:12px"></p>
+  </div>
+
+  <script src="js/register.js"></script>
+  <script src="js/theme.js"></script>
+</body>
+</html>
