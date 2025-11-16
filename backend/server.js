@@ -113,7 +113,7 @@ app.post('/admin/add-user', requireAuth('admin'), async (req, res) => {
     // unique username
     if (db.users.find(u => u.username === username)) return res.status(409).json({ error: 'Username exists' });
 
-    const newUser = { id: nanoid(8), username, password, role, county: county || '', profile_picture: profile_picture || '' };
+    const newUser = { id: nanoid(8), username, password, role, county: county || '', profile_picture: profile_picture || '', registered_by: actor.id };
     db.users.push(newUser);
     await writeDB(db);
     res.json({ ok: true, user: newUser });
@@ -163,17 +163,24 @@ app.post('/admin/reset-password/:id', requireAuth('admin'), async (req, res) => 
     const target = db.users.find(u => u.id === id);
     if (!target) return res.status(404).json({ error: 'User not found' });
     
-    // Superadmin can reset anyone, Admin can reset users/superusers, Superuser can reset users
-    const roles = ['user', 'superuser', 'admin', 'superadmin'];
-    const actorRank = roles.indexOf(actor.role);
-    const targetRank = roles.indexOf(target.role);
-    
-    if (actorRank <= targetRank) return res.status(403).json({ error: 'Cannot reset password for users of same or higher rank' });
-    
-    target.password = new_password;
-    if (target.token) delete target.token; // logout the user
-    await writeDB(db);
-    res.json({ ok: true, message: 'Password reset and user logged out' });
+    // Superadmin can reset any password, including other superadmins
+    if (actor.role === 'superadmin') {
+      target.password = new_password;
+      if (target.token) delete target.token;
+      await writeDB(db);
+      return res.json({ ok: true, message: 'Password reset and user logged out' });
+    }
+    // Admin can reset only users they registered
+    if (actor.role === 'admin') {
+      if (target.role !== 'user' || target.registered_by !== actor.id) {
+        return res.status(403).json({ error: 'Admins can only reset passwords for users they registered' });
+      }
+      target.password = new_password;
+      if (target.token) delete target.token;
+      await writeDB(db);
+      return res.json({ ok: true, message: 'Password reset and user logged out' });
+    }
+    return res.status(403).json({ error: 'Forbidden' });
   } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
@@ -346,17 +353,18 @@ app.get('/lookup/:regno', async (req, res) => {
   } catch (err) { res.status(500).json({ error: 'Server error' }); }
 });
 
-// admin list voters (with scope by county for non-superusers)
-// allow 'admin' and above to access the voter list (admin/superadmin can view)
+// admin list voters (show ALL voters to admins)
+// allow 'admin' and above to access the voter list (admin/superadmin can view all)
 app.get('/voter/list', requireAuth('admin'), async (req, res) => {
   try {
     const db = await readDB();
     const user = req.user;
     let rows = db.voters;
-    // admins and below can only see their county's voters
-    if (user.role === 'admin' && user.county) rows = rows.filter(r => r.county === user.county);
-    if (user.role === 'superuser' && user.county) rows = rows.filter(r => r.county === user.county);
-    if (user.role === 'clerk' && user.county) rows = rows.filter(r => r.county === user.county);
+    // Superadmins see all voters; others see their county if assigned
+    if (user.role !== 'superadmin' && user.county) {
+      rows = rows.filter(r => r.county === user.county);
+    }
+    // For superadmins, show all voters (no county filter)
     res.json({ rows });
   } catch (err) { res.status(500).json({ error: 'Server error' }); }
 });

@@ -1,3 +1,88 @@
+/* Full-screen hero styles for index.html */
+.hero-full {
+  width: 100vw;
+  min-height: 340px;
+  height: 50vh;
+  max-height: 520px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  margin: 0;
+  border-radius: 0 0 32px 32px;
+  box-shadow: 0 10px 40px rgba(255,51,51,.10);
+}
+.hero-overlay-full {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg,rgba(0,0,0,0.55) 0%,rgba(255,51,51,0.08) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-text {
+  text-align: center;
+  color: #fff;
+  padding: 0 24px;
+  width: 100%;
+  max-width: 600px;
+}
+.hero-text h1 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 12px rgba(0,0,0,.4);
+}
+.hero-subtitle {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #ffe4e4;
+  margin-bottom: 18px;
+  text-shadow: 1px 1px 6px rgba(0,0,0,.3);
+}
+.hero-links {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.main-content {
+  width: 100vw;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+.about-section {
+  margin-top: 32px;
+  text-align: center;
+}
+.about-desc {
+  font-size: 1.1rem;
+  color: #e0e0e0;
+  margin: 0 auto;
+  max-width: 600px;
+  line-height: 1.7;
+}
+.requirements-list {
+  font-size: 15px;
+  line-height: 1.8;
+  margin: 0;
+  padding-left: 20px;
+}
+@media(max-width:900px){
+  .main-content{max-width:100vw;padding:0 6px;}
+}
+@media(max-width:600px){
+  .hero-full{min-height:180px;height:32vh;max-height:260px;border-radius:0 0 18px 18px;}
+  .hero-text h1{font-size:1.5rem;}
+  .hero-subtitle{font-size:1rem;}
+  .main-content{padding:0 2px;}
+  .about-section{margin-top:18px;}
+}
 /* style.css (user-facing) */
 :root{
   --bg:#0d0d0d; --accent:#ff3333; --accent2:#ff9500; --text:#ffffff;

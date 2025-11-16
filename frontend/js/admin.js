@@ -13,6 +13,17 @@ async function init() {
     return;
   }
   
+  // Prevent browser back button from showing cached page
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) {
+      // Page was restored from browser cache (back button)
+      const currentToken = localStorage.getItem('adminToken');
+      if (!currentToken) {
+        window.location.href = 'admin_login.html';
+      }
+    }
+  });
+  
   await loadProfile();
   await fetchStats();
   setInterval(fetchStats, 5000);
@@ -74,9 +85,9 @@ function setupEventListeners() {
     });
   });
   
-  // Form for adding admin users (in settings)
-  if (document.getElementById('form-add-admin-user')) {
-    document.getElementById('form-add-admin-user').addEventListener('submit', addAdminUser);
+  // Form for adding users (in settings)
+  if (document.getElementById('form-add-user')) {
+    document.getElementById('form-add-user').addEventListener('submit', addUser);
   }
   
   // Toggle registration button (in manage users tab)
@@ -113,7 +124,11 @@ async function logout() {
   }
   localStorage.removeItem('adminToken');
   localStorage.removeItem('adminUser');
-  window.location.href = 'admin_login.html';
+  localStorage.removeItem('user_role');
+  // prevent back button from showing cached page
+  window.history.forward();
+  // go to login with no-cache
+  window.location.href = 'admin_login.html?_t=' + Date.now();
 }
 
 async function fetchStats() {
@@ -161,10 +176,12 @@ function displayVoters(voters) {
   tbody.innerHTML = '';
   voters.forEach(voter => {
     const row = document.createElement('tr');
+    const statusStyle = voter.confirmed ? 'color: #ff3333; font-weight: 600;' : '';
+    const confirmedText = voter.confirmed ? ' ✓ VOTED' : '';
     row.innerHTML = `
-      <td>${voter.first_name} ${voter.last_name}</td>
-      <td>${voter.county}</td>
-      <td>${voter.voter_reg_no}</td>
+      <td style="${statusStyle}">${voter.first_name} ${voter.last_name}${confirmedText}</td>
+      <td style="${statusStyle}">${voter.county}</td>
+      <td style="${statusStyle}">${voter.voter_reg_no}</td>
       <td>
         <button onclick="downloadPDF('${voter.voter_reg_no}')">PDF</button>
         <button onclick="deleteVoter('${voter.voter_reg_no}')">Delete</button>
@@ -338,7 +355,7 @@ async function openSettings() {
   const tabName = 'edit-profile';
   switchTab(tabName);
   await loadSettingsProfile();
-  await loadSettingsAdminUsers();
+  await loadSettingsUsers();
   await loadManageUsers();
   await loadRegistrationStatus();
   checkSuperadminAccess();
@@ -353,14 +370,14 @@ async function loadSettingsProfile() {
   }
 }
 
-async function loadSettingsAdminUsers() {
+async function loadSettingsUsers() {
   try {
     const res = await fetch(`${API_URL}/admin/list-users`, {
       headers: { 'x-admin-token': localStorage.getItem('adminToken') }
     });
     if (!res.ok) return;
     const data = await res.json();
-    const tbody = document.querySelector('#admin-users-table tbody');
+    const tbody = document.querySelector('#add-users-table tbody');
     tbody.innerHTML = '';
     data.users.forEach(user => {
       const row = document.createElement('tr');
@@ -368,6 +385,9 @@ async function loadSettingsAdminUsers() {
         <td>${user.username}</td>
         <td>${user.role}</td>
         <td>${user.county || '-'}</td>
+        <td>
+          <button onclick="resetUserPassword('${user.id}', '${user.username}')" class="btn-small">Reset Password</button>
+        </td>
       `;
       tbody.appendChild(row);
     });
@@ -478,7 +498,10 @@ function switchTab(tabName) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
   document.getElementById(tabName).classList.add('active');
-  event.target.classList.add('active');
+  // Find the tab button by data-tab
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    if (btn.getAttribute('data-tab') === tabName) btn.classList.add('active');
+  });
 }
 
 async function saveProfile() {
