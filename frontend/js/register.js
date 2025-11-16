@@ -43,11 +43,15 @@ if (photoCameraInput) {
   photoCameraInput.addEventListener('change', () => {
     const f = photoCameraInput.files[0];
     if (!f) return;
+    // copy camera file to main photo input
+    const dt = new DataTransfer();
+    dt.items.add(f);
+    photoInput.files = dt.files;
+    // show preview
     const reader = new FileReader();
     reader.onload = () => { 
       preview.src = reader.result; 
-      preview.style.display='block'; 
-      preview.dataset.photo=''; 
+      preview.style.display='block';
     };
     reader.readAsDataURL(f);
   });
@@ -72,12 +76,7 @@ form.addEventListener('submit', async (e) => {
   if (!/^\d{2,12}$/.test(kenyanId)) { msg.textContent='Kenyan ID must be numeric (2-12 digits).'; msg.style.color='red'; return; }
   // construct formdata for multipart
   const fd = new FormData(form);
-  if (preview.dataset.photo) {
-    // capture photo dataurl (camera)
-    const blob = await (await fetch(preview.dataset.photo)).blob();
-    fd.set('photo', blob, 'photo.jpg');
-  }
-  // else file input already included
+  // photo from either regular upload or camera is already in photoInput.files
   try {
     const res = await fetch(`${regionsUrl.replace('/regions', '/register')}`, { method: 'POST', body: fd });
     const data = await res.json();

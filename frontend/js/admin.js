@@ -136,17 +136,23 @@ async function fetchStats() {
 
 async function loadVoters() {
   try {
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      console.error('No admin token found');
+      return;
+    }
     const res = await fetch(`${API_URL}/voter/list`, {
-      headers: { 'x-admin-token': localStorage.getItem('adminToken') }
+      headers: { 'x-admin-token': token }
     });
     if (!res.ok) {
-      console.warn('/voter/list returned', res.status, await res.text().catch(()=>''));
+      const errText = await res.text();
+      console.error(`/voter/list returned ${res.status}:`, errText);
       return;
     }
     const data = await res.json();
-    displayVoters(data.rows);
+    displayVoters(data.rows || []);
   } catch (err) {
-    console.error(err);
+    console.error('loadVoters error:', err);
   }
 }
 
@@ -295,6 +301,8 @@ async function toggleRegistration() {
       msg.style.color = '#4CAF50';
       msg.textContent = `✓ Registration is now ${result.open ? 'OPEN' : 'CLOSED'}`;
       document.getElementById('toggle-password').value = '';
+      // reload status to immediately update button state
+      await loadRegistrationStatus();
       // reload manage users to show updated status
       await loadManageUsers();
       // close modal after brief delay
@@ -478,6 +486,13 @@ async function saveProfile() {
   const username = document.getElementById('setting-username').value;
   const password = document.getElementById('setting-password').value;
   const profilePicFile = document.getElementById('setting-profile-pic').files[0];
+  const msg = document.getElementById('profile-msg');
+  
+  if (!username && !password && !profilePicFile) {
+    msg.textContent = 'No changes to save';
+    msg.style.color = '#ff9500';
+    return;
+  }
   
   if (username) payload.username = username;
   if (password) payload.password = password;
@@ -494,13 +509,18 @@ async function saveProfile() {
     });
     const result = await res.json();
     if (res.ok) {
-      alert('Profile updated successfully');
+      msg.textContent = '✓ Profile updated successfully';
+      msg.style.color = '#4CAF50';
+      document.getElementById('setting-password').value = '';
       await loadProfile();
+      setTimeout(() => { msg.textContent = ''; }, 3000);
     } else {
-      alert('Error: ' + result.error);
+      msg.textContent = 'Error: ' + (result.error || 'Update failed');
+      msg.style.color = '#ff3333';
     }
   } catch (err) {
-    alert('Error: ' + err.message);
+    msg.textContent = 'Error: ' + err.message;
+    msg.style.color = '#ff3333';
   }
 }
 

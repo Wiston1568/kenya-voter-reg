@@ -74,7 +74,7 @@
   </div>
   <script src="js/theme.js"></script>
   <script>
-    // Check registration status on page load
+    // Check registration status on page load and periodically
     async function checkRegistrationStatus() {
       try {
         const API_BASE = window.location.hostname === 'localhost'
@@ -96,6 +96,8 @@
       }
     }
     checkRegistrationStatus();
+    // Check every 5 seconds so toggle takes immediate effect
+    setInterval(checkRegistrationStatus, 5000);
   </script>
 </body>
 </html>

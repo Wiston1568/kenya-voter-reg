@@ -119,7 +119,7 @@ function stopScanner() {
 
 // continuous QR reading loop (reuses a single canvas to reduce GC)
 let frameSkip = 0;
-const FRAME_SKIP_RATE = 2; // process every 3rd frame for better performance
+const FRAME_SKIP_RATE = 1; // process every frame for better quality detection
 
 function tick() {
   if (!scanning) return;
@@ -128,7 +128,7 @@ function tick() {
     return;
   }
 
-  // skip frames for better performance on slower devices
+  // process every frame for better detection (modern phones handle this fine)
   frameSkip++;
   if (frameSkip % FRAME_SKIP_RATE !== 0) {
     requestAnimationFrame(tick);
@@ -136,7 +136,7 @@ function tick() {
   }
 
   // choose a processing width to balance speed and accuracy
-  const procWidth = Math.min(video.videoWidth || video.clientWidth || 1280, 640);
+  const procWidth = Math.min(video.videoWidth || video.clientWidth || 1280, 1280);
   const scale = procWidth / (video.videoWidth || procWidth);
   const procHeight = Math.floor((video.videoHeight || (video.clientHeight || procWidth)) * scale);
 

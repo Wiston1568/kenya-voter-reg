@@ -347,13 +347,15 @@ app.get('/lookup/:regno', async (req, res) => {
 });
 
 // admin list voters (with scope by county for non-superusers)
-// allow 'superuser' and above to access the voter list (so superuser/admin/superadmin can view)
-app.get('/voter/list', requireAuth('superuser'), async (req, res) => {
+// allow 'admin' and above to access the voter list (admin/superadmin can view)
+app.get('/voter/list', requireAuth('admin'), async (req, res) => {
   try {
     const db = await readDB();
     const user = req.user;
     let rows = db.voters;
+    // admins and below can only see their county's voters
     if (user.role === 'admin' && user.county) rows = rows.filter(r => r.county === user.county);
+    if (user.role === 'superuser' && user.county) rows = rows.filter(r => r.county === user.county);
     if (user.role === 'clerk' && user.county) rows = rows.filter(r => r.county === user.county);
     res.json({ rows });
   } catch (err) { res.status(500).json({ error: 'Server error' }); }
