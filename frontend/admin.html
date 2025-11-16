@@ -145,9 +145,11 @@
     <!-- Manage Users Tab (for admins/superusers) -->
     <div id="manage-users" class="tab-content">
       <h3>Manage Users & Settings</h3>
-      <div id="toggle-registration-section" style="display:none;">
-        <button id="btn-toggle-registration" style="width:100%;margin-bottom:15px;">Toggle Voter Registration</button>
-        <p id="toggle-msg"></p>
+      <div id="toggle-registration-section" style="display:none;margin-bottom:30px;padding:20px;background:rgba(255,149,0,.1);border:1px solid rgba(255,149,0,.3);border-radius:8px;">
+        <h4 style="color:var(--accent2);margin-top:0;">Voter Registration Control</h4>
+        <p style="color:#d0d0d0;margin-bottom:15px;">Superadmins can enable or disable voter registration. Click the button below and enter your password to toggle.</p>
+        <button id="btn-toggle-registration" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:0;border-radius:6px;font-weight:600;cursor:pointer;">Toggle Voter Registration</button>
+        <p id="toggle-msg" style="margin-top:10px;"></p>
       </div>
       <h4>User Management</h4>
       <div id="manage-users-list"></div>
@@ -160,10 +162,13 @@
   <div class="modal-content">
     <span class="close" id="close-toggle-registration">&times;</span>
     <h2>Toggle Voter Registration</h2>
-    <p>Enter your password to confirm:</p>
-    <input type="password" id="toggle-password" placeholder="Password">
-    <button id="confirm-toggle">Toggle</button>
-    <p id="reg-toggle-msg"></p>
+    <p style="color:#d0d0d0;margin-bottom:20px;">Enter your password to confirm this action:</p>
+    <div style="margin-bottom:15px;">
+      <label style="display:block;margin-bottom:6px;color:var(--accent2);font-weight:600;">Password</label>
+      <input type="password" id="toggle-password" placeholder="Enter your password" style="width:100%;padding:10px;border-radius:6px;border:2px solid rgba(255,149,0,.3);background:#1a1a1a;color:#fff;">
+    </div>
+    <button id="confirm-toggle" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:0;border-radius:6px;font-weight:600;cursor:pointer;margin-bottom:15px;">Confirm Toggle</button>
+    <p id="reg-toggle-msg" style="text-align:center;font-weight:600;"></p>
   </div>
 </div>
 

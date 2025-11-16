@@ -34,21 +34,57 @@ subEl.addEventListener('change', () => {
 useCameraBtn.addEventListener('click', async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    const video = document.createElement('video'); video.autoplay = true; video.srcObject = stream;
-    const modal = document.createElement('div'); modal.style.position='fixed'; modal.style.left=0; modal.style.top=0; modal.style.right=0; modal.style.bottom=0; modal.style.display='flex'; modal.style.alignItems='center'; modal.style.justifyContent='center'; modal.style.background='rgba(0,0,0,0.6)';
-    const inner = document.createElement('div'); inner.style.background='#fff'; inner.style.padding='10px'; inner.appendChild(video);
-    const snapBtn = document.createElement('button'); snapBtn.textContent='Capture'; snapBtn.style.display='block';
-    inner.appendChild(snapBtn);
+    const video = document.createElement('video');
+    video.autoplay = true;
+    video.playsInline = true; // important for mobile (prevents fullscreen on iOS)
+    video.muted = true; // avoid autoplay restrictions
+    video.srcObject = stream;
+    // build modal with an overlay and inner container; place capture button over video so it's always visible on mobile
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed'; modal.style.left = 0; modal.style.top = 0; modal.style.right = 0; modal.style.bottom = 0;
+    modal.style.display = 'flex'; modal.style.alignItems = 'center'; modal.style.justifyContent = 'center';
+    modal.style.background = 'rgba(0,0,0,0.6)'; modal.style.zIndex = 9999; modal.style.padding = '12px';
+
+    const inner = document.createElement('div');
+    inner.style.position = 'relative'; inner.style.background = '#000'; inner.style.borderRadius = '8px'; inner.style.overflow = 'hidden';
+    inner.style.maxWidth = '92vw'; inner.style.maxHeight = '80vh'; inner.style.display = 'flex'; inner.style.alignItems = 'center'; inner.style.justifyContent = 'center';
+    // style video to fit inner box
+    video.style.width = '100%'; video.style.height = '100%'; video.style.objectFit = 'cover';
+    inner.appendChild(video);
+
+    // controls container (overlayed at bottom center)
+    const controls = document.createElement('div');
+    controls.style.position = 'absolute'; controls.style.left = 0; controls.style.right = 0; controls.style.bottom = '12px';
+    controls.style.display = 'flex'; controls.style.justifyContent = 'center'; controls.style.gap = '12px'; controls.style.zIndex = 3;
+
+    const snapBtn = document.createElement('button'); snapBtn.textContent = 'Capture';
+    snapBtn.style.padding = '10px 16px'; snapBtn.style.borderRadius = '6px'; snapBtn.style.border = 'none'; snapBtn.style.background = '#ff9500'; snapBtn.style.color = '#fff'; snapBtn.style.fontWeight = '700'; snapBtn.style.boxShadow = '0 6px 18px rgba(0,0,0,.3)';
+
+    const cancelBtn = document.createElement('button'); cancelBtn.textContent = 'Cancel';
+    cancelBtn.style.padding = '10px 12px'; cancelBtn.style.borderRadius = '6px'; cancelBtn.style.border = 'none'; cancelBtn.style.background = 'rgba(255,255,255,.85)'; cancelBtn.style.color = '#111'; cancelBtn.style.fontWeight = '600';
+
+    controls.appendChild(snapBtn); controls.appendChild(cancelBtn);
+    inner.appendChild(controls);
+
     modal.appendChild(inner); document.body.appendChild(modal);
+
+    // ensure video plays (some browsers require play() call)
+    try { await video.play(); } catch (e) { /* ignore */ }
+
     snapBtn.addEventListener('click', () => {
-      const canvas = document.createElement('canvas'); canvas.width = video.videoWidth; canvas.height = video.videoHeight; canvas.getContext('2d').drawImage(video,0,0);
+      const canvas = document.createElement('canvas'); canvas.width = video.videoWidth || video.clientWidth; canvas.height = video.videoHeight || video.clientHeight; canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
       const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-      preview.src = dataUrl; preview.style.display='block';
+      preview.src = dataUrl; preview.style.display = 'block';
       // stop stream
-      stream.getTracks().forEach(t=>t.stop());
+      stream.getTracks().forEach(t => t.stop());
       document.body.removeChild(modal);
-      // store data url in a hidden input by adding to form dataset
+      // store data url in preview dataset
       preview.dataset.photo = dataUrl;
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      try { stream.getTracks().forEach(t => t.stop()); } catch (e) {}
+      if (modal.parentNode) document.body.removeChild(modal);
     });
   } catch (err) {
     alert('Camera access failed.');

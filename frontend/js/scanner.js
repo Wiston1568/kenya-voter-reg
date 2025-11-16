@@ -54,56 +54,102 @@ async function markAsVoted(regNo) {
 }
 
 // start camera for QR scanning
+let scanCanvas = null;
+let scanContext = null;
+
 async function startScanner() {
   const msg = document.getElementById("scan-result");
 
   try {
     video = document.getElementById("qr-video");
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+    // Preferred constraints: rear camera, higher resolution for better scanning
+    const constraints = {
+      audio: false,
+      video: {
+        facingMode: { ideal: "environment" },
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    };
+
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
     video.srcObject = stream;
     video.setAttribute("playsinline", true);
-    video.play();
+    video.muted = true;
     video.style.display = "block";
-    scanning = true;
 
-    tick();
+    // Wait for video metadata so we have videoWidth/videoHeight
+    await new Promise((resolve, reject) => {
+      const onLoaded = () => {
+        video.removeEventListener('loadedmetadata', onLoaded);
+        resolve();
+      };
+      video.addEventListener('loadedmetadata', onLoaded);
+      // fallback timeout
+      setTimeout(resolve, 2000);
+    });
+
+    // create or resize scan canvas once
+    if (!scanCanvas) {
+      scanCanvas = document.createElement('canvas');
+      scanContext = scanCanvas.getContext('2d');
+    }
+
+    // set scanning flag and start playing
+    scanning = true;
+    try { await video.play(); } catch (e) { /* ignore play errors */ }
+
+    requestAnimationFrame(tick);
   } catch (err) {
-    msg.textContent = "Camera access denied.";
-    msg.style.color = "red";
+    msg.textContent = "Camera access denied or not available.";
+    msg.className = "error";
+    msg.classList.add("show");
   }
 }
 
 // stop camera
 function stopScanner() {
   if (video && video.srcObject) {
-    video.srcObject.getTracks().forEach(t => t.stop());
+    try { video.srcObject.getTracks().forEach(t => t.stop()); } catch (e) {}
     video.style.display = "none";
     scanning = false;
   }
 }
 
-// continuous QR reading loop
+// continuous QR reading loop (reuses a single canvas to reduce GC)
 function tick() {
   if (!scanning) return;
+  if (!video || video.readyState < 2) {
+    requestAnimationFrame(tick);
+    return;
+  }
 
-  const canvas = document.createElement("canvas");
-  const context = canvas.getContext("2d");
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
+  // choose a processing width to balance speed and accuracy
+  const procWidth = Math.min(video.videoWidth || video.clientWidth || 1280, 1280);
+  const scale = procWidth / (video.videoWidth || procWidth);
+  const procHeight = Math.floor((video.videoHeight || (video.clientHeight || procWidth)) * scale);
 
-  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  scanCanvas.width = procWidth;
+  scanCanvas.height = procHeight;
 
+  // draw scaled image to canvas
   try {
-    const code = jsQR(
-      context.getImageData(0, 0, canvas.width, canvas.height).data,
-      canvas.width,
-      canvas.height
-    );
+    scanContext.drawImage(video, 0, 0, scanCanvas.width, scanCanvas.height);
+    const imgData = scanContext.getImageData(0, 0, scanCanvas.width, scanCanvas.height);
 
+    // try jsQR on the current frame
+    const code = jsQR(imgData.data, imgData.width, imgData.height);
     if (code) {
+      // stop scanning to avoid duplicates
+      scanning = false;
+      try { video.srcObject.getTracks().forEach(t => t.stop()); } catch (e) {}
       processQR(code.data);
+      return;
     }
-  } catch (e) {}
+  } catch (e) {
+    // ignore errors from getImageData on cross-origin or unsupported platforms
+  }
 
   requestAnimationFrame(tick);
 }

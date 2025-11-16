@@ -13,9 +13,12 @@
         <h1>Kenya Voter Registration</h1>
         <p class="hero-subtitle">Your Voice, Your Vote, Your Future</p>
         <div class="hero-overlay">
-          <a class="link" href="register.html">Register to vote →</a>
+          <a class="link" id="register-link" href="register.html">Register to vote →</a>
           &nbsp;•&nbsp;
           <a class="link" href="recover.html">Recover your voter card</a>
+        </div>
+        <div id="registration-closed-banner" style="display:none;margin-top:20px;padding:12px;background:rgba(255,51,51,0.3);border:1px solid #ff3333;border-radius:6px;color:#ffcccc;font-weight:600;text-align:center;">
+          Voter Registration is currently CLOSED
         </div>
       </div>
     </div>
@@ -70,5 +73,29 @@
     </div>
   </div>
   <script src="js/theme.js"></script>
+  <script>
+    // Check registration status on page load
+    async function checkRegistrationStatus() {
+      try {
+        const API_BASE = window.location.hostname === 'localhost'
+          ? 'http://localhost:4000'
+          : `${window.location.protocol}//${window.location.host}`;
+        const res = await fetch(`${API_BASE}/registration/status`);
+        const data = await res.json();
+        const banner = document.getElementById('registration-closed-banner');
+        const link = document.getElementById('register-link');
+        if (!data.open) {
+          banner.style.display = 'block';
+          link.style.display = 'none';
+        } else {
+          banner.style.display = 'none';
+          link.style.display = 'inline-block';
+        }
+      } catch (err) {
+        console.error('Failed to check registration status:', err);
+      }
+    }
+    checkRegistrationStatus();
+  </script>
 </body>
 </html>

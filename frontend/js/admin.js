@@ -272,7 +272,9 @@ async function addAdminUser(e) {
 async function toggleRegistration() {
   const pwd = document.getElementById('toggle-password').value;
   if (!pwd) {
-    alert('Please enter your password');
+    const msg = document.getElementById('reg-toggle-msg');
+    msg.style.color = 'red';
+    msg.textContent = 'Please enter your password';
     return;
   }
   
@@ -286,18 +288,26 @@ async function toggleRegistration() {
       body: JSON.stringify({ password: pwd })
     });
     const result = await res.json();
-    const msg = document.getElementById('toggle-msg');
+    const msg = document.getElementById('reg-toggle-msg');
     if (res.ok) {
-      msg.style.color = 'green';
-      msg.textContent = `Registration is now ${result.open ? 'OPEN' : 'CLOSED'}`;
+      msg.style.color = '#4CAF50';
+      msg.textContent = `✓ Registration is now ${result.open ? 'OPEN' : 'CLOSED'}`;
       document.getElementById('toggle-password').value = '';
-      setTimeout(() => closeModal('modal-toggle-registration'), 2000);
+      // reload manage users to show updated status
+      await loadManageUsers();
+      // close modal after brief delay
+      setTimeout(() => {
+        closeModal('modal-toggle-registration');
+        document.getElementById('reg-toggle-msg').textContent = '';
+      }, 2000);
     } else {
-      msg.style.color = 'red';
-      msg.textContent = result.error || 'Error';
+      msg.style.color = '#ff3333';
+      msg.textContent = result.error || 'Error toggling registration';
     }
   } catch (err) {
-    document.getElementById('toggle-msg').textContent = 'Error: ' + err.message;
+    const msg = document.getElementById('reg-toggle-msg');
+    msg.style.color = '#ff3333';
+    msg.textContent = 'Error: ' + err.message;
   }
 }
 
@@ -320,6 +330,7 @@ async function openSettings() {
   await loadSettingsProfile();
   await loadSettingsAdminUsers();
   await loadManageUsers();
+  await loadRegistrationStatus();
   checkSuperadminAccess();
   openModal('modal-settings');
 }
@@ -352,6 +363,25 @@ async function loadSettingsAdminUsers() {
     });
   } catch (err) {
     console.error(err);
+  }
+}
+
+async function loadRegistrationStatus() {
+  try {
+    const res = await fetch(`${API_URL}/registration/status`);
+    const data = await res.json();
+    const toggleBtn = document.getElementById('btn-toggle-registration');
+    if (toggleBtn) {
+      if (data.open) {
+        toggleBtn.textContent = '🟢 Registration OPEN - Click to Close';
+        toggleBtn.style.background = 'linear-gradient(135deg, rgba(76,175,80,0.8), rgba(56,142,60,0.8))';
+      } else {
+        toggleBtn.textContent = '🔴 Registration CLOSED - Click to Open';
+        toggleBtn.style.background = 'linear-gradient(135deg, rgba(255,51,51,0.8), rgba(244,67,54,0.8))';
+      }
+    }
+  } catch (err) {
+    console.error('Failed to load registration status:', err);
   }
 }
 

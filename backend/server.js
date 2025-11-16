@@ -22,6 +22,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve static files (frontend)
 app.use(express.static(path.join(__dirname, '../frontend')));
+// Serve top-level images directory (so frontend can reference `/images/...`)
+app.use('/images', express.static(path.join(__dirname, '../images')));
 
 const DATA_PATH = path.join(__dirname, 'data', 'db.json');
 const REGIONS_PATH = path.join(__dirname, 'data', 'kenya_regions.json');

@@ -4,12 +4,12 @@
 }
 body{font-family:Inter,Arial,sans-serif;background:linear-gradient(135deg, #1a1a1a 0%, #2d1a1a 100%);color:var(--text);margin:0;padding:0;min-height:100vh}
 .container{max-width:720px;margin:40px auto;padding:24px;background:rgba(20,20,20,0.8);border-radius:12px;box-shadow:0 10px 40px rgba(255,51,51,.15);border:1px solid rgba(255,149,0,.2)}
-.header-hero{height:260px;background:linear-gradient(180deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;position:relative;overflow:hidden;background-size:cover;background-position:center;background-attachment:fixed}
+.header-hero{height:260px;background:linear-gradient(180deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;position:relative;overflow:hidden;background-size:cover;background-position:center}
 .header-hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1}
-.hero-content{position:relative;z-index:2;text-align:center;width:100%;padding:0 20px}
+.hero-content{position:relative;z-index:2;text-align:center;width:100%;padding:0 20px;padding-bottom:52px}
 .hero-content h1{font-size:42px;margin:0 0 12px 0;font-weight:700;text-shadow:2px 2px 8px rgba(0,0,0,.6);letter-spacing:-0.5px}
 .hero-content .hero-subtitle{font-size:18px;margin:0 0 20px 0;color:#ffe4e4;font-weight:300;text-shadow:1px 1px 4px rgba(0,0,0,.5)}
-.hero-overlay{position:absolute;bottom:-40px;text-align:center;width:100%;z-index:3}
+.hero-overlay{position:absolute;bottom:18px;left:0;width:100%;z-index:3;display:flex;justify-content:center;gap:12px;padding:0 12px;box-sizing:border-box}
 a.link{display:inline-block;margin-top:14px;color:#ffcc00;text-decoration:none;font-weight:600;transition:all .3s;padding:8px 16px;border-radius:4px}
 a.link:hover{color:#fff;background:rgba(255,149,0,.3);transform:translateY(-2px)}
 .photo-preview{width:120px;height:150px;border:1px solid #ddd;object-fit:cover}
@@ -49,6 +49,8 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(255,149,0,.4)
   .header-hero{height:200px}
   .hero-content h1{font-size:28px}
   .hero-content .hero-subtitle{font-size:14px}
+  .hero-content{padding-bottom:44px}
+  .hero-overlay{bottom:12px;gap:8px}
   .features-grid{grid-template-columns:1fr 1fr}
   .cta-section{padding:20px}
   .cta-button{padding:10px 24px;font-size:14px}
