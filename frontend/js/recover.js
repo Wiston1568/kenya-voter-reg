@@ -1,30 +1,53 @@
-// recover.js
-const form = document.getElementById('recover-form');
-const msg = document.getElementById('rmsg');
-const rdownload = document.getElementById('rdownload');
+const API_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:4000'
+  : `${window.location.protocol}//${window.location.host}`;
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault(); msg.textContent=''; rdownload.style.display='none';
-  const id = document.getElementById('rid').value.trim();
-  const API_BASE = window.location.hostname === 'localhost'
-    ? 'http://localhost:4000'
-    : `${window.location.protocol}//${window.location.host}`;
+document.getElementById('recoverForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const kenyanId = document.getElementById('recover-kenyan-id').value.trim();
+  const msg = document.getElementById('recover-msg');
+
+  if (!kenyanId || !/^\d{2,12}$/.test(kenyanId)) {
+    msg.style.color = 'red';
+    msg.textContent = 'Please enter a valid Kenyan ID (2-12 digits)';
+    return;
+  }
+
   try {
-    // simple approach: search by kenyan_id via /voter/list requires auth; but we have /lookup/:regno only
-    // We'll call an ad-hoc endpoint: /voter/by-id?kenyan_id=...
-    const res = await fetch(`${API_BASE}/voter/by-id?kenyan_id=${encodeURIComponent(id)}`);
-    const data = await res.json();
-    if (res.ok && data.record) {
-      msg.textContent = `Found record: ${data.record.voter_reg_no}`;
-      // use public pdf endpoint (no auth required for recovery)
-      const pdfRes = await fetch(`${API_BASE}/pdf-public/${data.record.voter_reg_no}`);
-      const blob = await pdfRes.blob();
-      rdownload.href = URL.createObjectURL(blob);
-      rdownload.download = `voter_${data.record.voter_reg_no}.pdf`;
-      rdownload.textContent = 'Download Voter Card';
-      rdownload.style.display = 'inline-block';
-    } else {
-      msg.textContent = data.error || 'Not found';
+    // First, lookup the voter by kenyan_id
+    const res = await fetch(`${API_URL}/voter/by-id?kenyan_id=${encodeURIComponent(kenyanId)}`);
+    if (!res.ok) {
+      msg.style.color = 'red';
+      msg.textContent = 'Voter not found. Please check your Kenyan ID and try again.';
+      return;
     }
-  } catch (err) { msg.textContent = 'Server error'; }
+
+    const data = await res.json();
+    const voterRegNo = data.record.voter_reg_no;
+
+    // Download the PDF using the public endpoint
+    try {
+      const pdfRes = await fetch(`${API_URL}/pdf-public/${encodeURIComponent(voterRegNo)}`);
+      if (!pdfRes.ok) {
+        throw new Error('Failed to download PDF');
+      }
+      const blob = await pdfRes.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `voter_${voterRegNo}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      msg.style.color = '#4CAF50';
+      msg.textContent = '✓ Voter card downloaded successfully!';
+      document.getElementById('recoverForm').reset();
+    } catch (err) {
+      msg.style.color = 'red';
+      msg.textContent = 'Error downloading voter card: ' + err.message;
+    }
+  } catch (err) {
+    msg.style.color = 'red';
+    msg.textContent = 'Error: ' + err.message;
+  }
 });

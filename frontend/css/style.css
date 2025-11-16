@@ -129,8 +129,42 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(255,149,0,.4)
 
 .voting-tips ul li{font-size:14px}
 
+/* Tab styles for register/recover forms */
+.tabs-header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid rgba(255,149,0,.2);
+}
+.tab-link {
+  background: none;
+  border: none;
+  color: #888;
+  padding: 12px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .3s;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+.tab-link.active {
+  color: var(--accent2);
+  border-bottom-color: var(--accent2);
+}
+.tab-link:hover {
+  color: var(--accent2);
+}
+.tab-pane {
+  display: none;
+}
+.tab-pane.active {
+  display: block;
+}
+
 @media(max-width:600px){
   .container{margin:16px;padding:14px}
+  .tabs-header{gap:8px;margin-bottom:16px}
+  .tab-link{padding:10px 14px;font-size:13px}
   .header-hero{height:200px}
   .hero-content h1{font-size:28px}
   .hero-content .hero-subtitle{font-size:14px}

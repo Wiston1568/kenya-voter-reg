@@ -90,10 +90,15 @@ function setupEventListeners() {
     document.getElementById('form-add-user').addEventListener('submit', addUser);
   }
   
-  // Toggle registration button (in manage users tab)
+  // Toggle registration button (in registration control tab)
   const toggleBtn = document.getElementById('btn-toggle-registration');
   if (toggleBtn) {
-    toggleBtn.addEventListener('click', () => openModal('modal-toggle-registration'));
+    toggleBtn.addEventListener('click', () => {
+      // Always open modal for password authentication
+      openModal('modal-toggle-registration');
+      document.getElementById('toggle-password').value = '';
+      document.getElementById('reg-toggle-msg').textContent = '';
+    });
   }
   
   document.getElementById('close-toggle-registration').addEventListener('click', () => closeModal('modal-toggle-registration'));
@@ -190,6 +195,7 @@ function displayVoters(voters) {
     tbody.appendChild(row);
   });
 }
+
 
 // delete voter (called from UI)
 async function deleteVoter(regno) {

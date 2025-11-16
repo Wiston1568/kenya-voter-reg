@@ -19,7 +19,7 @@
     "Ruiru": ["Kahawa Sukari", "Kahawa Wendani", "Gitothua", "Mwiki"],
     "Thika Town": ["Kamenu", "Hospital", "Ngecha", "Gatuanyaga"],
     "Kiambu": ["Karuri", "Muchatha", "Ndenderu", "Gachie"],
-    "Githunguri": ["Githiga", "Gathugu", "Ng’enda", "Kariara"]
+    "Githunguri": ["Githiga", "Gathugu", "Ng'enda", "Kariara"]
   },
   "Nakuru": {
     "Nakuru Town West": ["Biashara", "Kivumbini", "Nakuru West", "Kaptembwa"],
@@ -177,6 +177,11 @@
     "Uasin Gishu": ["Eldoret", "Wareng"],
     "Turbo": ["Turbo", "Kesses"],
     "Moiben": ["Moiben", "Ainabkoi"]
+  },
+  "Kericho": {
+    "Kericho": ["Kericho Town", "Kipchoge"],
+    "Ainamoi": ["Ainamoi", "Kimusi"],
+    "Belgaum": ["Belgaum", "Silibwet"]
   },
   "Trans Nzoia": {
     "Trans Nzoia East": ["Kitale", "Endebess"],

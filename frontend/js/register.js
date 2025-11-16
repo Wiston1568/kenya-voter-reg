@@ -12,28 +12,68 @@ const preview = document.getElementById('photo-preview');
 const useCameraBtn = document.getElementById('use-camera');
 let regions = {};
 
+// List of all 47 Kenyan counties in order
+const allCounties = [
+  'Mombasa', 'Nairobi', 'Kiambu', 'Nakuru', 'Kisumu', 'Meru', 'Kwale', 'Lamu', 
+  'Taita Taveta', 'Makueni', 'Kajiado', 'Narok', 'Bomet', 'Kericho', 'Siaya', 'Kisii', 
+  'Homabay', 'Migori', 'Turkana', 'Samburu', 'Laikipia', 'Isiolo', 'Nyeri', 'Kirinyaga', 
+  'Murang\'a', 'Embu', 'Tharaka Nithi', 'Elgeyo Marakwet', 'Nandi', 'Baringo', 'West Pokot', 
+  'Uasin Gishu', 'Trans Nzoia', 'Bungoma', 'Busia', 'Vihiga', 'Kakamega'
+];
+
 async function loadRegions(){
-  const res = await fetch(regionsUrl);
-  regions = await res.json();
-  Object.keys(regions).forEach(c => {
-    const opt = document.createElement('option'); opt.value=c; opt.textContent=c; countyEl.appendChild(opt);
-  });
+  try {
+    const res = await fetch(regionsUrl);
+    regions = await res.json();
+    // Populate counties in order
+    allCounties.forEach(county => {
+      if (regions[county]) {
+        const opt = document.createElement('option');
+        opt.value = county;
+        opt.textContent = county;
+        countyEl.appendChild(opt);
+      }
+    });
+  } catch (err) {
+    console.error('Failed to load regions:', err);
+    // Fallback: still populate counties without data
+    allCounties.forEach(county => {
+      const opt = document.createElement('option');
+      opt.value = county;
+      opt.textContent = county;
+      countyEl.appendChild(opt);
+    });
+  }
 }
+
 countyEl.addEventListener('change', () => {
-  subEl.innerHTML = '<option value="">Select sub-county</option>'; wardEl.innerHTML = '<option value="">Select ward</option>';
-  const c = countyEl.value; if(!c) return;
-  Object.keys(regions[c]).forEach(sc => { const o=document.createElement('option'); o.value=sc; o.textContent=sc; subEl.appendChild(o); });
+  subEl.innerHTML = '<option value="">Select sub-county</option>';
+  wardEl.innerHTML = '<option value="">Select ward</option>';
+  const c = countyEl.value;
+  if (!c || !regions[c]) return;
+  Object.keys(regions[c]).forEach(sc => {
+    const o = document.createElement('option');
+    o.value = sc;
+    o.textContent = sc;
+    subEl.appendChild(o);
+  });
 });
+
 subEl.addEventListener('change', () => {
   wardEl.innerHTML = '<option value="">Select ward</option>';
-  const c=countyEl.value, sc=subEl.value; if(!c||!sc) return;
-  regions[c][sc].forEach(w => { const o=document.createElement('option'); o.value=w; o.textContent=w; wardEl.appendChild(o); });
+  const c = countyEl.value;
+  const sc = subEl.value;
+  if (!c || !sc || !regions[c] || !regions[c][sc]) return;
+  regions[c][sc].forEach(w => {
+    const o = document.createElement('option');
+    o.value = w;
+    o.textContent = w;
+    wardEl.appendChild(o);
+  });
 });
 
 // camera capture
 useCameraBtn.addEventListener('click', async () => {
-  // button now just triggers the hidden camera input (handled by HTML onclick)
-  // this is a fallback in case HTML onclick fails
   document.getElementById('photo-camera').click();
 });
 
@@ -49,21 +89,24 @@ if (photoCameraInput) {
     photoInput.files = dt.files;
     // show preview
     const reader = new FileReader();
-    reader.onload = () => { 
-      preview.src = reader.result; 
-      preview.style.display='block';
+    reader.onload = () => {
+      preview.src = reader.result;
+      preview.style.display = 'block';
     };
     reader.readAsDataURL(f);
   });
 }
-
 
 // preview file upload
 photoInput.addEventListener('change', () => {
   const f = photoInput.files[0];
   if (!f) return;
   const reader = new FileReader();
-  reader.onload = () => { preview.src = reader.result; preview.style.display='block'; preview.dataset.photo=''; };
+  reader.onload = () => {
+    preview.src = reader.result;
+    preview.style.display = 'block';
+    preview.dataset.photo = '';
+  };
   reader.readAsDataURL(f);
 });
 
@@ -73,10 +116,13 @@ form.addEventListener('submit', async (e) => {
   msg.textContent = '';
   // client-side validation for kenyan id numeric only 2-12 digits
   const kenyanId = form.kenyan_id.value.trim();
-  if (!/^\d{2,12}$/.test(kenyanId)) { msg.textContent='Kenyan ID must be numeric (2-12 digits).'; msg.style.color='red'; return; }
+  if (!/^\d{2,12}$/.test(kenyanId)) {
+    msg.textContent = 'Kenyan ID must be numeric (2-12 digits).';
+    msg.style.color = 'red';
+    return;
+  }
   // construct formdata for multipart
   const fd = new FormData(form);
-  // photo from either regular upload or camera is already in photoInput.files
   try {
     const res = await fetch(`${regionsUrl.replace('/regions', '/register')}`, { method: 'POST', body: fd });
     const data = await res.json();
@@ -92,11 +138,13 @@ form.addEventListener('submit', async (e) => {
         msg.style.color = 'red';
         msg.innerHTML = (data.error || 'Kenyan ID already registered') + ' — if this is you, try <a href="recover.html">recovering your reg</a>.';
       } else {
-        msg.style.color='red'; msg.textContent = data.error || 'Registration failed';
+        msg.style.color = 'red';
+        msg.textContent = data.error || 'Registration failed';
       }
     }
   } catch (err) {
-    msg.style.color='red'; msg.textContent = 'Server error';
+    msg.style.color = 'red';
+    msg.textContent = 'Server error';
   }
 });
 
