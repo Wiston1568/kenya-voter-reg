@@ -372,6 +372,19 @@ app.get('/pdf/:regno', requireAuth('clerk'), async (req, res) => {
   } catch (err) { res.status(500).json({ error: 'Server error' }); }
 });
 
+// download pdf (public - for recovery, no auth required)
+app.get('/pdf-public/:regno', async (req, res) => {
+  try {
+    const db = await readDB();
+    const rec = db.voters.find(v => v.voter_reg_no === req.params.regno);
+    if (!rec) return res.status(404).json({ error: 'Not found' });
+    const pdfBuffer = await generateVoterPDF(rec);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="voter_${rec.voter_reg_no}.pdf"`);
+    res.send(pdfBuffer);
+  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+});
+
 // QR confirmation endpoint: receives regno or scanned payload, marks confirmed if not already
 app.post('/voter/confirm', requireAuth('clerk'), async (req, res) => {
   try {

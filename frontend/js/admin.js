@@ -31,6 +31,8 @@ async function loadProfile() {
     if (!res.ok) throw new Error('Failed to load profile');
     currentUser = await res.json();
     document.getElementById('profile-name').textContent = currentUser.username;
+    // store role for UI checks
+    localStorage.setItem('user_role', currentUser.role);
     if (currentUser.profile_picture) {
       document.getElementById('profile-pic').src = currentUser.profile_picture;
     }

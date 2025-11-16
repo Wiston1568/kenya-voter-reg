@@ -118,6 +118,9 @@ function stopScanner() {
 }
 
 // continuous QR reading loop (reuses a single canvas to reduce GC)
+let frameSkip = 0;
+const FRAME_SKIP_RATE = 2; // process every 3rd frame for better performance
+
 function tick() {
   if (!scanning) return;
   if (!video || video.readyState < 2) {
@@ -125,17 +128,30 @@ function tick() {
     return;
   }
 
+  // skip frames for better performance on slower devices
+  frameSkip++;
+  if (frameSkip % FRAME_SKIP_RATE !== 0) {
+    requestAnimationFrame(tick);
+    return;
+  }
+
   // choose a processing width to balance speed and accuracy
-  const procWidth = Math.min(video.videoWidth || video.clientWidth || 1280, 1280);
+  const procWidth = Math.min(video.videoWidth || video.clientWidth || 1280, 640);
   const scale = procWidth / (video.videoWidth || procWidth);
   const procHeight = Math.floor((video.videoHeight || (video.clientHeight || procWidth)) * scale);
 
   scanCanvas.width = procWidth;
   scanCanvas.height = procHeight;
 
-  // draw scaled image to canvas
+  // draw scaled image to canvas with horizontal flip to match video display
   try {
+    scanContext.save();
+    // flip horizontally to match the CSS transform: scaleX(-1) on the video
+    scanContext.translate(scanCanvas.width, 0);
+    scanContext.scale(-1, 1);
     scanContext.drawImage(video, 0, 0, scanCanvas.width, scanCanvas.height);
+    scanContext.restore();
+    
     const imgData = scanContext.getImageData(0, 0, scanCanvas.width, scanCanvas.height);
 
     // try jsQR on the current frame

@@ -118,6 +118,7 @@ form.addEventListener('submit', async e => {
       // Save token and user info
       localStorage.setItem('adminToken', result.token);
       localStorage.setItem('adminUser', JSON.stringify(result));
+      localStorage.setItem('user_role', result.role);
       window.location.href='admin.html';
     } else {
       msg.style.color='red';

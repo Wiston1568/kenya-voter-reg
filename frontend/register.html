@@ -58,7 +58,8 @@
         <label>Passport photo (upload or use camera)</label>
         <input type="file" id="photo" name="photo" accept="image/*" />
         <div style="margin-top:8px">
-          <button type="button" id="use-camera">Use Camera</button>
+          <button type="button" id="use-camera" onclick="document.getElementById('photo-camera').click()">Use Camera</button>
+          <input type="file" id="photo-camera" name="photo-camera" accept="image/*" capture="environment" style="display:none;" />
         </div>
         <img id="photo-preview" class="photo-preview" src="" alt="preview" style="display:none;margin-top:8px"/>
       </div>

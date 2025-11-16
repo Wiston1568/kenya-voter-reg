@@ -16,7 +16,8 @@ form.addEventListener('submit', async (e) => {
     const data = await res.json();
     if (res.ok && data.record) {
       msg.textContent = `Found record: ${data.record.voter_reg_no}`;
-      const pdfRes = await fetch(`${API_BASE}/pdf/${data.record.voter_reg_no}`, { headers: {} });
+      // use public pdf endpoint (no auth required for recovery)
+      const pdfRes = await fetch(`${API_BASE}/pdf-public/${data.record.voter_reg_no}`);
       const blob = await pdfRes.blob();
       rdownload.href = URL.createObjectURL(blob);
       rdownload.download = `voter_${data.record.voter_reg_no}.pdf`;
